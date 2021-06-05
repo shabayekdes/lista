@@ -2,8 +2,11 @@
 
 namespace App\Exceptions;
 
-use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Throwable;
+use Illuminate\Auth\AuthenticationException;
+use Illuminate\Validation\ValidationException;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 
 class Handler extends ExceptionHandler
 {
@@ -50,6 +53,40 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Throwable $exception)
     {
+        // dd($exception);
+        // dd($exception instanceof ModelNotFoundException);
+        if ($request->wantsJson() || $request->isJson()) {
+
+            $response = [];
+
+            // If this exception is an instance of HttpException
+            if ($this->isHttpException($exception)) {
+                // Grab the HTTP status code from the Exception
+                $response["internalMessage"] = $exception->getMessage() ?: "Not Found";
+                $code = $exception->getStatusCode();
+            }
+
+            if ($exception instanceof ValidationException) {
+                $response["message"] = current(current($exception->errors()));
+                $response["errors"]["errorMessage"] = "Invalid Data";
+                $response["errors"]["errorDetails"] = $exception->errors();
+                $code = 422;
+            }
+
+            if ($exception instanceof AuthenticationException ) {
+                $response["message"] = "Unauthenticated.";
+                $code = 401;
+            }
+
+            if ($exception instanceof ModelNotFoundException) {
+                $response["message"] = $exception->getModel() . " not found with the id: " . implode(", ", $exception->getIds());
+                $code = 404;
+            }
+            
+            // Return a JSON response with the response array and status code
+            $response["code"] = $code;
+            return response()->json($response, 200);
+        }
         return parent::render($request, $exception);
     }
 }
