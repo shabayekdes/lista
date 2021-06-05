@@ -66,11 +66,7 @@ class CategoryController extends Controller
      */
     public function destroy(Category $category)
     {
-        try {
-            $category->delete();
-            return $this->jsonResponse('Category deleted successfully');
-        } catch (\Exception $e) {
-            return $this->errorResponse("No query results for category: $id", "Invalid data");
-        }
+        $category->delete();
+        return $this->jsonResponse('Category deleted successfully');
     }
 }
