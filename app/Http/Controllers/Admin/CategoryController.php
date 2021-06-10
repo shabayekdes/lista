@@ -27,9 +27,9 @@ class CategoryController extends Controller
      * @param  CategoryRequest  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(CategoryRequest $request)
     {
-        $category = Category::create($request->all());
+        $category = Category::create($request->validated());
 
         return $this->jsonResponse('Category added successfully', $category, 201);
     }
