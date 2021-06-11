@@ -53,6 +53,31 @@ class BrandCrudTest extends TestCase
         $this->assertTrue(Arr::has($result, 'errors.errorDetails.name'));
 
     }
+        /**
+     * A basic feature test example.
+     *
+     * @return void
+     */
+    public function test_can_store_brand_with_unique_slug()
+    {
+        $this->withoutExceptionHandling();
+
+        $data = $this->getData();
+
+        $brand = factory(Brand::class)->create([
+            'name' => $data['name']
+        ]);
+
+        $response = $this->post('/api/admin/brands', $data);
+
+
+        $response->assertStatus(200);
+
+        $result = $response->json();
+
+        $this->assertEquals(201, $result['code']);
+        $this->assertEquals($brand->slug . '-2' , $result['data']['slug']);
+    }
      /**
      * A basic feature test example.
      *
