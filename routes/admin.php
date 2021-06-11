@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\BrandController;
+use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\CategoryController;
 
 /*
@@ -18,3 +19,4 @@ use App\Http\Controllers\Admin\CategoryController;
 
 Route::apiResource('categories', CategoryController::class);
 Route::apiResource('brands', BrandController::class);
+Route::apiResource('products', ProductController::class);
