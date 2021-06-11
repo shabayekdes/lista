@@ -4,6 +4,7 @@ namespace Tests\Feature\Admin;
 
 use Tests\TestCase;
 use App\Models\Product;
+use App\Models\Category;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -38,10 +39,7 @@ class ProductCrudTest extends TestCase
 
         Arr::forget($data, 'name');
 
-        $response = $this->withHeaders([
-                'Content-Type' => 'application/json',
-                'Accept' => 'application/json'
-            ])->post('/api/admin/products', $data);
+        $response = $this->postJson('/api/admin/products', $data);
 
 
         $response->assertStatus(200);
@@ -79,6 +77,49 @@ class ProductCrudTest extends TestCase
 
         $this->assertEquals(201, $result['code']);
         $this->assertEquals($product->slug . '-2' , $result['data']['slug']);
+    }
+    /**
+     * A basic feature test example.
+     *
+     * @return void
+     */
+    public function test_can_store_product_with_category_is_required()
+    {
+
+        $data = $this->getData();
+
+        Arr::forget($data, 'category_id');
+
+        $response = $this->postJson('/api/admin/products', $data);
+
+        $result = $response->json();
+
+
+        $this->assertEquals(422, $result['code']);
+        $this->assertEquals("The category id field is required.", $result['message']);
+
+        $this->assertTrue(Arr::has($result, 'errors.errorDetails.category_id'));
+    }
+    /**
+     * A basic feature test example.
+     *
+     * @return void
+     */
+    public function test_can_store_product_with_category_exists()
+    {
+
+        $data = $this->getData();
+        $data['category_id'] = 2;
+
+        $response = $this->postJson('/api/admin/products', $data);
+
+        $result = $response->json();
+
+        $this->assertEquals(422, $result['code']);
+        $this->assertEquals("The selected category id is invalid.", $result['message']);
+
+
+        $this->assertTrue(Arr::has($result, 'errors.errorDetails.category_id'));
     }
     /**
      * A basic feature test example.
@@ -167,7 +208,9 @@ class ProductCrudTest extends TestCase
     private function getData()
     {
         return [
-            'name' => $this->faker->sentence()
+            'name' => $this->faker->sentence(),
+            'slug' => 'test',
+            'category_id' => factory(Category::class)->create()->id
         ];
     }
 }
