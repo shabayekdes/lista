@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Admin;
 
+use App\Models\Brand;
 use Tests\TestCase;
 use App\Models\Product;
 use App\Models\Category;
@@ -126,6 +127,48 @@ class ProductCrudTest extends TestCase
      *
      * @return void
      */
+    public function test_can_store_product_with_brand_is_required()
+    {
+
+        $data = $this->getData();
+
+        Arr::forget($data, 'brand_id');
+
+        $response = $this->postJson('/api/admin/products', $data);
+
+        $result = $response->json();
+
+        $this->assertEquals(422, $result['code']);
+        $this->assertEquals("The brand id field is required.", $result['message']);
+
+        $this->assertTrue(Arr::has($result, 'errors.errorDetails.brand_id'));
+    }
+    /**
+     * A basic feature test example.
+     *
+     * @return void
+     */
+    public function test_can_store_product_with_brand_exists()
+    {
+
+        $data = $this->getData();
+        $data['brand_id'] = 2;
+
+        $response = $this->postJson('/api/admin/products', $data);
+
+        $result = $response->json();
+
+        $this->assertEquals(422, $result['code']);
+        $this->assertEquals("The selected brand id is invalid.", $result['message']);
+
+
+        $this->assertTrue(Arr::has($result, 'errors.errorDetails.brand_id'));
+    }
+    /**
+     * A basic feature test example.
+     *
+     * @return void
+     */
     public function test_can_update_product()
     {
         // $this->withoutExceptionHandling();
@@ -210,7 +253,8 @@ class ProductCrudTest extends TestCase
         return [
             'name' => $this->faker->sentence(),
             'slug' => 'test',
-            'category_id' => factory(Category::class)->create()->id
+            'category_id' => factory(Category::class)->create()->id,
+            'brand_id' => factory(Brand::class)->create()->id
         ];
     }
 }

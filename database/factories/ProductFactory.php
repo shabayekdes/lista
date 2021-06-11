@@ -2,6 +2,7 @@
 
 /** @var \Illuminate\Database\Eloquent\Factory $factory */
 
+use App\Models\Brand;
 use App\Models\Product;
 use App\Models\Category;
 use Illuminate\Support\Str;
@@ -12,6 +13,7 @@ $factory->define(Product::class, function (Faker $faker) {
     return [
         'name' => $name,
         'slug' => Str::slug($name),
-        'category_id' => factory(Category::class)->create()->id
+        'category_id' => factory(Category::class)->create()->id,
+        'brand_id' => factory(Brand::class)->create()->id
     ];
 });
