@@ -71,7 +71,6 @@ class ProductCrudTest extends TestCase
 
         $response = $this->post('/api/admin/products', $data);
 
-
         $response->assertStatus(200);
 
         $result = $response->json();
@@ -164,6 +163,27 @@ class ProductCrudTest extends TestCase
 
         $this->assertTrue(Arr::has($result, 'errors.errorDetails.brand_id'));
     }
+        /**
+     * A basic feature test example.
+     *
+     * @return void
+     */
+    public function test_can_store_product_with_price_is_required()
+    {
+
+        $data = $this->getData();
+
+        Arr::forget($data, 'price');
+
+        $response = $this->postJson('/api/admin/products', $data);
+
+        $result = $response->json();
+
+        $this->assertEquals(422, $result['code']);
+        $this->assertEquals("The price field is required.", $result['message']);
+
+        $this->assertTrue(Arr::has($result, 'errors.errorDetails.price'));
+    }
     /**
      * A basic feature test example.
      *
@@ -254,7 +274,9 @@ class ProductCrudTest extends TestCase
             'name' => $this->faker->sentence(),
             'slug' => 'test',
             'category_id' => factory(Category::class)->create()->id,
-            'brand_id' => factory(Brand::class)->create()->id
+            'brand_id' => factory(Brand::class)->create()->id,
+            'price' => $this->faker->randomFloat(2)
+
         ];
     }
 }

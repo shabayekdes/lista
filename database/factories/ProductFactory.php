@@ -14,6 +14,8 @@ $factory->define(Product::class, function (Faker $faker) {
         'name' => $name,
         'slug' => Str::slug($name),
         'category_id' => factory(Category::class)->create()->id,
-        'brand_id' => factory(Brand::class)->create()->id
+        'brand_id' => factory(Brand::class)->create()->id,
+        'price' => $faker->randomFloat(2)
+
     ];
 });

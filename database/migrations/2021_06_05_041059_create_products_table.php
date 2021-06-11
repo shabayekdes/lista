@@ -19,6 +19,7 @@ class CreateProductsTable extends Migration
             $table->string('slug')->unique();
             $table->foreignId('category_id')->constrained()->onDelete('cascade');
             $table->foreignId('brand_id')->constrained()->onDelete('cascade');
+            $table->decimal('price', 8,2);
             $table->timestamps();
         });
     }
