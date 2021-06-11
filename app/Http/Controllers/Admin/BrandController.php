@@ -29,7 +29,7 @@ class BrandController extends Controller
      */
     public function store(BrandRequest $request)
     {
-        $brand = Brand::create($request->all());
+        $brand = Brand::create($request->validated());
 
         return $this->jsonResponse('Brand added successfully', $brand, 201);
     }
