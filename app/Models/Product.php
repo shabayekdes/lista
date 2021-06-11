@@ -12,7 +12,7 @@ class Product extends Model
      *
      * @var array
      */
-    protected $fillable = ['name', 'slug', 'category_id'];
+    protected $fillable = ['name', 'slug', 'category_id', 'brand_id'];
 
     /**
      * Set the proper slug attribute
