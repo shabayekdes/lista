@@ -70,6 +70,31 @@ class CategoryCrudTest extends TestCase
      *
      * @return void
      */
+    public function test_can_store_category_with_unique_slug()
+    {
+        $this->withoutExceptionHandling();
+
+        $data = $this->getData();
+
+        $category = factory(Category::class)->create([
+            'name' => $data['name']
+        ]);
+
+        $response = $this->post('/api/admin/categories', $data);
+
+
+        $response->assertStatus(200);
+
+        $result = $response->json();
+
+        $this->assertEquals(201, $result['code']);
+        $this->assertEquals($category->slug . '-2' , $result['data']['slug']);
+    }
+    /**
+     * A basic feature test example.
+     *
+     * @return void
+     */
     public function test_can_update_category()
     {
         // $this->withoutExceptionHandling();
